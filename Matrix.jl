@@ -3,7 +3,7 @@ function Matrix(N)
   #Teilchenanzahl
   l_A = rand(10:(N*2))
   l_B = 2*N-l_A
-  #erstelle Platzhalter für Teilchen des Systems A (z. Bsp.: 0== spin up, 1== spin down)
+  #erstelle Platzhalter für Teilchen des Systems A (Zuordnung spin up/down?)
   A=rand(0:1,(l_A,l_A))
   a=size(A,1)
 
@@ -40,23 +40,27 @@ function Matrix(N)
     w= eigvals(ρ)
     v= zeros(w)
     for i in 1:length(w)
-      if w[i] < 0.00000000001
+      if w[i] < 0.00000000000001
         v[i]=0
         else
           v[i]= (w[i]*log(w[i]))
             end
     end
     #Berechne Verschränkung
+    if sum(v) ==0
+      V=0
+    else
     V= -sum(v)
+  end
   return println( "Anzahl aller Teilchen: ", N, "\n","\n",
-  "Anzahl der Platzhalter in System A: ", l_A,"\n",
-  "\n", "Anzahl der Platzhalter in System B : ",l_B ,"\n",
+  "Anzahl der Plätze in System A: ", l_A,"\n",
+  "\n", "Anzahl der Plätze in System B : ",l_B ,"\n",
   "Zustandsmatrix M: \n", c*M, "\n","\n",
   "Die reduzierte Dichtematrix des Systems A ubd B ist: \n", ρ, "\n","\n",
   "Eigenwerte: ", w, "\n", "\n",
   "Die Verschränkung des zufälligen Zustands beträgt: \n","\n",V)
 
 else
-  println("Matrix M hat nur Nulleinträge")
+  println("Nicht verschränkt, ρ = Nulleinträge")
 end
 end
