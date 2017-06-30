@@ -1,8 +1,8 @@
 
 function Matrix(N)
-  #Teilchenanzahl
-  l_A = rand(10:(N*2))
-  l_B = 2*N-l_A
+  #Teilchenanzahl -> teilchenzahl== Platzanzahl
+  l_A = rand(10:(N))
+  l_B = N-l_A
   #erstelle Platzhalter für Teilchen des Systems A (Zuordnung spin up/down?)
   A=rand(0:1,(l_A,l_A))
   a=size(A,1)
@@ -22,7 +22,7 @@ function Matrix(N)
   #Normieren: |a|^2+|b|^2 =1
   C=zeros(size(M))
   for i in eachindex(M)
-    C[i]= M[i]^2
+    C[i]= sqrt(M[i]^2)
   end
   if sum(C) != 0
     c= 1/sum(C)
