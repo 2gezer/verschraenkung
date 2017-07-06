@@ -1,21 +1,21 @@
 
 #Teilchenanzahl
 
-# # bezeichne Spins, wie?
+# # bezeichne Spins, wie   ???
 # u=0 #up
 # d=1 #down
 # uu = 00 #upup
 # ud = 01 #updown
 # du = 10 #downup
 # dd = 11 #downdown
-#erstelle Array für die Basisvektoren von System A
+
 
 #Gebe Zustand durch manuelles Eingeben von Spinverteilung in A und B ein.
-function redMat(A,BC)
+function verschraenkt(A,B)
   #Dimension von A
   a= size(A,1)
   #dimension von B
-  b= size(BC,1)
+  b= size(B,1)
 
   #Zustandsraum 2^N.... wie implentieren?
 #  Psi = rand(0:1,(2^a,2^b)
@@ -23,7 +23,7 @@ function redMat(A,BC)
   Psi= zeros(a,b)
   for i in 1:a
     for j in 1:b
-      Psi[i,j] = (A[i])*BC[j]
+      Psi[i,j] = (A[i])*B[j])
     end
   end
 
@@ -51,15 +51,15 @@ function redMat(A,BC)
       v[i]= (w[i]*log(w[i]))
     end
   end
-  # Voraussetzung: Summe der Eigenwerte=1
+  # Voraussetzung: Summe der Eigenwerte=1 ???
   if 1.1< sum(w) < 0.9
       V=0
       println("Keine Verschränkung, da Summe der Eigenwerte ≠ 1", sum(w), w)
     else
       V= -sum(v)
-  return println("Anzahl der Plätze: ", sum(A)+sum(BC), "\n","\n",
+  return println("Anzahl der Plätze: ", sum(A)+sum(B), "\n","\n",
   "Spinverteilung ausgehend von Anfangszustand in  A: ", A,"\n",
-  "\n", "Spinverteilung ausgehend von Anfangszustand in B : ",BC ,"\n","\n",
+  "\n", "Spinverteilung ausgehend von Anfangszustand in B : ",B ,"\n","\n",
   "normierte Zustandsmatrix Psi : \n", Psi, "\n","\n",
   "Die reduzierte Dichtematrix des Systems A ubd B ist: \n", ρ, "\n","\n",
   "Eigenwerte: ", w, "\n", "\n",

@@ -1,66 +1,46 @@
 
-function Matrix(N)
-  #Teilchenanzahl -> teilchenzahl== Platzanzahl
-  l_A = rand(10:(N))
-  l_B = N-l_A
-  #erstelle Platzhalter für Teilchen des Systems A (Zuordnung spin up/down?)
-  A=rand(0:1,(l_A,l_A))
-  a=size(A,1)
+function Matrix(P)
+  #Platzanzahl
+  a = rand(1:(P-1))
+  b = (P-a)
 
-  #erstelle B Platzhalter für Teilchen aus System B
-  B=rand(0:1,(l_B,l_B))
-  b=size(B,1)
+  #erstelle zufälligen Zustand Psi mit zeilen von Psi == dim A , Spalten von Psi == dim B)
+  M= rand(0:1,(2^a,2^b))
 
-  #erstelle Matrix aus System A und B : (Zeilen von M == dim A , Spalten von M == dim B)
-  M= zeros(a,b)
-  #Fülle die Matrix nach der Formel ψ= ∑ψij |i> |j>
-  for i in 1:a
-    for j in 1:b
-      M[i,j]= A[i]*B[j]
-    end
-  end
   #Normieren: |a|^2+|b|^2 =1
-  C=zeros(size(M))
-  for i in eachindex(M)
-    C[i]= sqrt(M[i]^2)
-  end
-  if sum(C) != 0
-    c= 1/sum(C)
-    #Berechne die reduzierte Dichtematrix mit ρ = ∑ ψ_ij*ψ_i'j
-    ρ = zeros(a,a)
-    for i in 1:size(M,1)
-      for k in 1:size(M,1)
-        for j in 1:size(M,2)
-          ρ[i,k]= sum(c^2*M[i,j]*M[k,j])   #markdown julia docs.
-        end
+  M= M/norm(M)
+  #Berechne die reduzierte Dichtematrix mit ρ = ∑ ψ_ij*ψ_i'j
+  ρ = zeros(a,a)
+  for i in 1:size(Psi,1)
+    for k in 1:size(Psi,1)
+      for j in 1:size(Psi,2)
+        ρ[i,k]+= sum(Psi[i,j]*Psi[k,j]) #+ da, sonst ρ[i,k] zu Null überschrieben wird
+        #println(ρ) #markdown julia docs.
       end
     end
-
-    #Berechne Eigenwerte
-    w= eigvals(ρ)
-    v= zeros(w)
-    for i in 1:length(w)
-      if w[i] < 0.00000000000001
-        v[i]=0
-        else
-          v[i]= (w[i]*log(w[i]))
-            end
-    end
-    #Berechne Verschränkung
-    if sum(v) ==0
-      V=0
+  end
+  #Berechne Eigenwerte
+  w= eigvals(ρ)
+  v= zeros(w)
+  for i in 1:length(w)
+    if w[i] < 0.00000000000001
+      v[i]=0
     else
+      v[i]= (w[i]*log(w[i]))
+    end
+  end
+  #Berechne Verschränkung
+  if sum(v) ==0
+    V=0
+    println("Nicht verschränkt")
+  else
     V= -sum(v)
   end
-  return println( "Anzahl aller Teilchen: ", N, "\n","\n",
-  "Anzahl der Plätze in System A: ", l_A,"\n",
-  "\n", "Anzahl der Plätze in System B : ",l_B ,"\n",
-  "Zustandsmatrix M: \n", c*M, "\n","\n",
+  return println( "Anzahl aller Teilchen: ", P, "\n","\n",
+  "Anzahl der Plätze in System A: ", a,"\n",
+  "\n", "Anzahl der Plätze in System B : ",b ,"\n",
+  "Zustandsmatrix M: \n", M, "\n","\n",
   "Die reduzierte Dichtematrix des Systems A ubd B ist: \n", ρ, "\n","\n",
   "Eigenwerte: ", w, "\n", "\n",
   "Die Verschränkung des zufälligen Zustands beträgt: \n","\n",V)
-
-else
-  println("Nicht verschränkt, ρ = Nulleinträge")
-end
 end
