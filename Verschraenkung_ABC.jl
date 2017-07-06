@@ -20,10 +20,10 @@ function verschraenkt(A,B)
   #Zustandsraum 2^N.... wie implentieren?
 #  Psi = rand(0:1,(2^a,2^b)
 
-  Psi= zeros(a,b)
+  Psi= zeros(2^a,2^b)
   for i in 1:a
     for j in 1:b
-      Psi[i,j] = (A[i])*B[j])
+      Psi[i,j] = (A[i]*B[j])
     end
   end
 
@@ -54,7 +54,7 @@ function verschraenkt(A,B)
   # Voraussetzung: Summe der Eigenwerte=1 ???
   if 1.1< sum(w) < 0.9
       V=0
-      println("Keine Verschränkung, da Summe der Eigenwerte ≠ 1", sum(w), w)
+      println() #"Summe der Eigenwerte ist immer eins, keine Voraussätzung für Verdchränkung≠ 1", sum(w), w
     else
       V= -sum(v)
   return println("Anzahl der Plätze: ", sum(A)+sum(B), "\n","\n",
