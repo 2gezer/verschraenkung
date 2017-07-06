@@ -1,4 +1,5 @@
-
+using Gadfly
+  x=[]
 function Matrix(P)
 
   ##zeros(Int8, 2^a, 2^b)??
@@ -8,7 +9,7 @@ function Matrix(P)
   b = (P-a)
 
   #erstelle zufälligen Zustand Psi mit Zeilen von Psi == dim 2^A , Spalten von Psi == dim 2^B)
-  Psi= rand(0:1,2^a,2^b)
+  Psi= rand(2^a,2^b)
 
   #Normiere: |a|^2+|b|^2 =1
   Psi= Psi/norm(Psi)
@@ -44,9 +45,10 @@ function Matrix(P)
 
 # ein Zustand ist verschränkt, wenn die
 if  abs(V) < 1.0e-10
+  push!(x,V)
   println("∑",w, "-> w*ln(w)=0 -> Nicht verschränkt","\n", "\n")
 else
-
+ push!(x,V)
 return println( "Anzahl aller Teilchen: ", P, "\n","\n",
 "Anzahl der Plätze in System A: ", a,"\n",
 "\n", "Anzahl der Plätze in System B : ",b ,"\n", "\n",
@@ -57,3 +59,6 @@ return println( "Anzahl aller Teilchen: ", P, "\n","\n",
 end
 return Psi,ρ,w
 end
+
+
+    
