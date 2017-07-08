@@ -13,14 +13,12 @@ x=[]
 #Funktion zur Berechnnung der Verschränkung
 function vrs(X)
 
-  ##zeros(Int8, 2^a, 2^b)??
-
   #Platzanzahl
   a = rand(1:(X-1))
   b = (X-a)
 
   #erstelle zufälligen Zustand Psi mit Zeilen von Psi == dim 2^A , Spalten von Psi == dim 2^B)
-  Psi= rand(2^a,2^b)
+  Psi= rand(-1:1,2^a,2^b)
 
   #Normiere: |a|^2+|b|^2 =1
   Psi= Psi/norm(Psi)
@@ -43,11 +41,13 @@ function vrs(X)
 
   #Summe der Produkte der Eigenwerte mit ihren logarithmierten Werten
   for i in 1:length(w)
-    if abs(w[i]) < 1.0e-5
+		if 0> w[i] <-1.0e-15
+			println(w[i])
+			throw("eigenwert ist negativ")
+    elseif abs(w[i]) < 1.0e-5
       w[i] = 0.0
     else
       V += (w[i]*log(w[i]))
-      #  throw(w) Exception wenn?
     end
   end
 
@@ -56,7 +56,7 @@ function vrs(X)
   # ein Zustand ist verschränkt, wenn die
   if  abs(V) < 1.0e-10
     push!(x,abs(V))
-    println("∑",w, "-> w*ln(w)=0 -> Nicht verschränkt","\n", "\n")
+    println("-------------","\n","∑",w, "-> w*ln(w)=0 -> Nicht verschränkt","\n", "\n")
   else
     push!(x,abs(V))
     return println( "Anzahl aller Teilchen: ", X, "\n","\n",
@@ -65,7 +65,7 @@ function vrs(X)
     "Zustandsmatrix Psi: \n", Psi, "\n","\n",
     "Die reduzierte Dichtematrix des System A ubd B ist: \n", ρ, "\n","\n",
     "Eigenwerte: ", w, "\n", "\n",
-    "Die Verschränkung des zufälligen Zustands beträgt: \n","\n",-V)
+    "Die Verschränkung des zufälligen Zustands beträgt: \n","\n",-V,"\n","\n")
   end
   return Psi,ρ,w,V
 end
@@ -79,5 +79,3 @@ function plt(X)
   plot(x=1:length(x), y=x, Geom.point, Geom.line, blankTheme)
 
 end
-#deleteat!(x,1:length(x))
-#klappt das nun???
