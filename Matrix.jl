@@ -41,7 +41,7 @@ function vrs(X)
 
   #Summe der Produkte der Eigenwerte mit ihren logarithmierten Werten
   for i in 1:length(w)
-		if 0> w[i] <-1.0e-15
+		if 0> w[i] <-1.0e-14
 			println(w[i])
 			throw("eigenwert ist negativ")
     elseif abs(w[i]) < 1.0e-5
@@ -56,16 +56,16 @@ function vrs(X)
   # ein Zustand ist verschränkt, wenn die
   if  abs(V) < 1.0e-10
     push!(x,abs(V))
-    println("-------------","\n","∑",w, "-> w*ln(w)=0 -> Nicht verschränkt","\n", "\n")
+    println("------------------------","\n","∑",w, "-> w*ln(w)=0 -> Nicht verschränkt","\n","------------------------", "\n")
   else
     push!(x,abs(V))
-    return println( "Anzahl aller Teilchen: ", X, "\n","\n",
-    "Anzahl der Plätze in System A: ", a,"\n",
-    "\n", "Anzahl der Plätze in System B : ",b ,"\n", "\n",
-    "Zustandsmatrix Psi: \n", Psi, "\n","\n",
-    "Die reduzierte Dichtematrix des System A ubd B ist: \n", ρ, "\n","\n",
-    "Eigenwerte: ", w, "\n", "\n",
-    "Die Verschränkung des zufälligen Zustands beträgt: \n","\n",-V,"\n","\n")
+    # return println("Anzahl aller Teilchen: ", X, "\n","\n",
+    # "Anzahl der Plätze in System A: ", a,"\n",
+    # "\n", "Anzahl der Plätze in System B : ",b ,"\n", "\n",
+    # "Zustandsmatrix Psi: \n", Psi, "\n","\n",
+    # "Die reduzierte Dichtematrix des System A ubd B ist: \n", ρ, "\n","\n",
+    # "Eigenwerte: ", w, "\n", "\n",
+    # "Die Verschränkung des zufälligen Zustands beträgt: \n","\n",-V,"\n------------ \n")
   end
   return Psi,ρ,w,V
 end
@@ -73,9 +73,26 @@ end
 #Plot der Verschränkungswerte mit Schleife über vrs(X)
 function plt(X)
   deleteat!(x,1:length(x))
-  for i in 1:40
+  for i in 1:1000
     vrs(X)
   end
-  plot(x=1:length(x), y=x, Geom.point, Geom.line, blankTheme)
-
+	println("Mittelwert der Verschränkung bei ",X, " Plätzen: ", mean(x))
+  p = plot(x=1:length(x), y=x, Guide.title("Verschränkung verschiedener Zustände bei $X Plätzen"),
+					Guide.XLabel("zufälliger Zustand "),Guide.YLabel("Verschränkungswert"),
+					blankTheme, Geom.point)
+	return p
 end
+
+#p= [k = plot(x=1:length(x), y=x, Geom.point, blankTheme), for vrs(X)=1:1000 ]
+
+
+
+# #plotting window (module @layers using ColorBrewer using Gadfly end...???)
+#       colors = palette("Spectral", 11)
+#       lay =[layer(x=p, y=x, Geom.path,Theme(default_color=colors[i])) for i in 1:10] Guide.manual_color_key("legend for plot", ["1","2"]["deepskyblue", "orange"])
+#
+#       #plot
+#       plt=plot(lay... , Guide.title("Verschränkung verschiedener Zustände"),  Guide.XLabel("zufälliger Zustand "),Guide.YLabel("Verschränkungswert"),blankTheme)
+#       img = SVG("....svg", 8inch, 6inch)
+#       draw(img, plt)
+#       return
