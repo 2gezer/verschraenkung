@@ -1,4 +1,14 @@
+#Packages
+#Pkg.add("Gadfly") Pkg.add("Cairo") Pkg.add("Fontconfig")
 using Gadfly
+using Cairo
+using Fontconfig
+
+#### Variablen und Umgebung ###
+Psi = zeros() #Zustandsmatrix
+ρ = zeros()   #reduzierte Dichtematrix
+x=[]          #Werte der Verschränkung je zufälliger Zustand
+
 
 #Plotting Theme
 blankTheme = Theme(
@@ -7,8 +17,7 @@ panel_fill=colorant"white",
 major_label_color=colorant"black",
 minor_label_color=colorant"black")
 
-#Array zum festhalten von Verschränkungwert je zufälliger Zustand
-x=[]
+
 
 #Funktion zur Berechnnung der Verschränkung
 function vrs(X)
@@ -17,7 +26,7 @@ function vrs(X)
   a = rand(1:(X-1))
   b = (X-a)
 
-  #erstelle zufälligen Zustand Psi mit Zeilen von Psi == dim 2^A , Spalten von Psi == dim 2^B)
+  #erstelle zufälligen Zustand Psi (Zeilen von Psi == dim 2^a , Spalten == dim 2^b)
   Psi= rand(-1:1,2^a,2^b)
 
   #Normiere: |a|^2+|b|^2 =1
@@ -28,7 +37,7 @@ function vrs(X)
   for i in 1:size(Psi,1)
     for k in 1:size(Psi,1)
       for j in 1:size(Psi,2)
-        ρ[i,k]+= sum(Psi[i,j]*Psi[k,j])   #println(ρ) #markdown julia docs.
+        ρ[i,k]+= sum(Psi[i,j]*Psi[k,j])
       end
     end
   end
@@ -36,7 +45,7 @@ function vrs(X)
   #Berechne Eigenwerte
   w= eigvals(ρ)
 
-  #deklariere Verschränkungsvariable
+  #Verschränkungsvariable
   V::Float32 =0.0
 
   #Summe der Produkte der Eigenwerte mit ihren logarithmierten Werten
@@ -52,13 +61,13 @@ function vrs(X)
   end
 
   #Berechne Verschränkung
-
-  # ein Zustand ist verschränkt, wenn die
-  if  abs(V) < 1.0e-10
-    push!(x,abs(V))
-    println("------------------------","\n","∑",w, "-> w*ln(w)=0 -> Nicht verschränkt","\n","------------------------", "\n")
+V= abs(V);
+  # für V=0 keine Verschränkung
+  if  V < 1.0e-10
+    push!(x,V)
+    #println("------------------------","\n","∑",w, "-> w*ln(w)=0 -> Nicht verschränkt","\n","------------------------", "\n")
   else
-    push!(x,abs(V))
+    push!(x,V)
     # return println("Anzahl aller Teilchen: ", X, "\n","\n",
     # "Anzahl der Plätze in System A: ", a,"\n",
     # "\n", "Anzahl der Plätze in System B : ",b ,"\n", "\n",
@@ -67,12 +76,14 @@ function vrs(X)
     # "Eigenwerte: ", w, "\n", "\n",
     # "Die Verschränkung des zufälligen Zustands beträgt: \n","\n",-V,"\n------------ \n")
   end
-  return Psi,ρ,w,V
+  return Psi,ρ,w,V,x
 end
 
 #Plot der Verschränkungswerte mit Schleife über vrs(X)
 function plt(X)
+  if isempty(x)==false
   deleteat!(x,1:length(x))
+end
   for i in 1:1000
     vrs(X)
   end
@@ -80,6 +91,8 @@ function plt(X)
   p = plot(x=1:length(x), y=x, Guide.title("Verschränkung verschiedener Zustände bei $X Plätzen"),
 					Guide.XLabel("zufälliger Zustand "),Guide.YLabel("Verschränkungswert"),
 					blankTheme, Geom.point)
+          img = PDF("Verschränkung $X.pdf", 8inch, 6inch)
+          draw(img, p)
 	return p
 end
 
