@@ -21,8 +21,8 @@ minor_label_color=colorant"black")
 
 
 #Funktion zur Berechnnung der Verschränkung
-function vrs(X)
-  a= 2
+function vrs(X,a)
+
   #Platzanzahl
   b = (X-a) #wähle feste plätze
 
@@ -76,27 +76,28 @@ V= abs(V);
     # "Eigenwerte: ", w, "\n", "\n",
     # "Die Verschränkung des zufälligen Zustands beträgt: \n","\n",-V,"\n------------ \n")
   end
-  return Psi,ρ,w,V,x
+  return Psi,ρ,w,V,x,a
 end
 
 #Plot der Verschränkungswerte mit Schleife über vrs(X)
-function plt(X)
+function plt(X,a)
   #Lösche die Einträge aus vorheriger Schleife
-  if isempty(x) == false
+  if isempty(x) isempty(xs)== false
   deleteat!(x,1:length(x))
+  deleteat!(xs,1:length(x))
 end
-#for j in 3:X
+for j in (a+1):X
   for i in 1:100
-    vrs(X)
+    vrs(j,a)
   end
-  #push!(xs,mean(x)) #speichere Mittelwert der Verschränkung in Array
-#end
-	println("Mittelwert der Verschränkung bei ",X, " Plätzen: ", mean(x))
-  p = plot(x=1:length(x), y=x, Guide.title("Verschränkung verschiedener Zustände bei $X Plätzen"),
-					Guide.XLabel("Plätze mit Aufteilung A= 2, B= $(X-2) "),Guide.YLabel("mittlere Verschränkungswert"),
-					blankTheme, Geom.histogram(bincount=9))
-          img = PDF("Verschränkung $X.pdf", 8inch, 6inch)
+  push!(xs,mean(x)) #speichere Mittelwert der Verschränkung in Array
+end
+	println("Mittelwert der Verschränkung bei ",X, " Plätzen: ", xs[end])
+  p = plot(x=1:length(xs), y=xs, Guide.title("Verschränkung verschiedener Zustände bei $X Plätzen,\n mit Aufteilung A= $a, B= $(X-a)"),
+					Guide.XLabel("Plätze "),Guide.YLabel("mittlere Verschränkungswert"),
+					blankTheme, Geom.line)
+          img = PDF("Verschränkung $X,$a.pdf", 8inch, 6inch)
           draw(img, p)
 	return p
 end
-@time plt(15)
+@time plt(12,5)
