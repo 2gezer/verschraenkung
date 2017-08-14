@@ -1,5 +1,6 @@
 #Packages
 #Pkg.add("Gadfly") Pkg.add("Cairo") Pkg.add("Fontconfig")
+using Distributions
 using Gadfly
 using Cairo
 using Fontconfig
@@ -9,8 +10,7 @@ Psi = zeros() #Zustandsmatrix
 ρ = zeros()   #reduzierte Dichtematrix
 x=[]          #Werte der Verschränkung je zufälliger Zustand
 xs=[]         #Mittelwert der Verschänkung für die jeweilige Platzanzahl
-
-
+p=[]
 #Plotting Theme
 blankTheme = Theme(
 grid_color=colorant"grey",
@@ -22,12 +22,12 @@ minor_label_color=colorant"black")
 
 #Funktion zur Berechnnung der Verschränkung
 function vrs(X)
-  a= 2
-  #Platzanzahl
-  b = (X-a) #wähle feste plätze
+  #Plätzverteilung
+  a= 3 #wähle feste plätze
+  b = (X-a)
 
   #erstelle zufälligen Zustand Psi (Zeilen von Psi == dim 2^a , Spalten == dim 2^b)
-  Psi= rand(-1:1,2^a,2^b)
+  Psi= rand(-1:1,2^2,2^4)  #Binomial(), Poisson, Gauß-Verteilungen ausprobieren
 
   #Normiere: |a|^2+|b|^2 =1
   Psi= Psi/norm(Psi)
@@ -76,7 +76,10 @@ V= abs(V);
     # "Eigenwerte: ", w, "\n", "\n",
     # "Die Verschränkung des zufälligen Zustands beträgt: \n","\n",-V,"\n------------ \n")
   end
-  return Psi,ρ,w,V,x
+  for i in eachindex(x)
+    x[i]= floor(x[i],3)
+  end
+  return Psi,ρ,w,V,a,b,x
 end
 
 #Plot der Verschränkungswerte mit Schleife über vrs(X)
@@ -84,19 +87,17 @@ function plt(X)
   #Lösche die Einträge aus vorheriger Schleife
   if isempty(x) == false
   deleteat!(x,1:length(x))
-end
-#for j in 3:X
-  for i in 1:100
+  end
+  for i in 1:1000
     vrs(X)
   end
-  #push!(xs,mean(x)) #speichere Mittelwert der Verschränkung in Array
-#end
-	println("Mittelwert der Verschränkung bei ",X, " Plätzen: ", mean(x))
-  p = plot(x=1:length(x), y=x, Guide.title("Verschränkung verschiedener Zustände bei $X Plätzen"),
-					Guide.XLabel("Plätze mit Aufteilung A= 2, B= $(X-2) "),Guide.YLabel("mittlere Verschränkungswert"),
-					blankTheme, Geom.histogram(bincount=9))
+println("Mittelwert der Verschränkung bei ",X, " Plätzen: ", mean(x))
+
+  p = plot(x=x , y=1:length(x), Guide.title("Verschränkung verschiedener Zustände bei $X Plätzen"),
+					Guide.XLabel("Plätze mit Aufteilung A= $a, B= $b) "),Guide.YLabel("Häufigkeit"),
+					blankTheme, Geom.histogram(bincount= floor(1000*log(2))))
           img = PDF("Verschränkung $X.pdf", 8inch, 6inch)
           draw(img, p)
 	return p
 end
-@time plt(15)
+@time plt(3)

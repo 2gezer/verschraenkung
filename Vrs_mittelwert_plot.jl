@@ -24,16 +24,16 @@ minor_label_color=colorant"black")
 function vrs(X,a)
 
   #Platzanzahl
-  b = (X-a) #wähle feste plätze
+   #wähle feste plätze
 
   #erstelle zufälligen Zustand Psi (Zeilen von Psi == dim 2^a , Spalten == dim 2^b)
-  Psi= rand(-1:1,2^a,2^b)
+  Psi= H
 
   #Normiere: |a|^2+|b|^2 =1
   Psi= Psi/norm(Psi)
 
   #Berechne die reduzierte Dichtematrix mit ρ = ∑ ψ_ij*ψ_i'j
-  ρ = zeros(2^a,2^a)
+  ρ = zeros(2^size(H,1),2^(size(H,1)))
   for i in 1:size(Psi,1)
     for k in 1:size(Psi,1)
       for j in 1:size(Psi,2)
